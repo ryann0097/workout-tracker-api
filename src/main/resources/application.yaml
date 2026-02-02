@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: WorkoutTracker
+  jwt:
+    issuer: cabecao
+    secret: cabecao
+    expiration-hours: 2
