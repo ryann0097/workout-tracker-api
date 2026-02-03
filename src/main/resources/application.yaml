@@ -5,3 +5,8 @@ spring:
     issuer: cabecao
     secret: cabecao
     expiration-hours: 2
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
