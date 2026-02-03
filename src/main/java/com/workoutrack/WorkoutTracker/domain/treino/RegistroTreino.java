@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,7 +19,7 @@ public class RegistroTreino {
     @UuidGenerator
     private UUID id;
 
-    private Timestamp dataExecucao;
+    private LocalDateTime dataExecucao;
 
     @ManyToOne
     private Treino treino;

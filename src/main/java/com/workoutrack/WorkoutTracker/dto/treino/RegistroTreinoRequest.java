@@ -1,9 +1,9 @@
 package com.workoutrack.WorkoutTracker.dto.treino;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public record RegistroTreinoRequest(
-        Timestamp dataExecucao,
+        LocalDateTime dataExecucao,
         List<ExercicioExecutadoRequest> exercicios
 ) {}
