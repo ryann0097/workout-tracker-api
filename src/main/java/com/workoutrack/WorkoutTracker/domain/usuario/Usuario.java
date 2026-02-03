@@ -21,7 +21,7 @@ public class Usuario {
 
     private String senha;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "perfil_treino_id")
     private PerfilTreino perfilTreino;
 }
