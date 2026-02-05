@@ -6,6 +6,7 @@ import com.workoutrack.WorkoutTracker.dto.usuario.UsuarioRegisterRequest;
 import com.workoutrack.WorkoutTracker.service.JwtTokenService;
 import com.workoutrack.WorkoutTracker.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +18,7 @@ import com.workoutrack.WorkoutTracker.service.UsuarioService;
 import com.workoutrack.WorkoutTracker.dto.usuario.LoginResponse;
 
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/auth")
@@ -42,8 +44,8 @@ public class AutenticacaoController {
             String token = jwtTokenService.generateToken(user);
 
             return new LoginResponse(token, user.getId(), user.getUsername());
-        } catch (AuthenticationException e){
-            throw new RuntimeException("Credenciais inválidas");
+        } catch (AuthenticationException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Credenciais inválidas");
         }
     }
 }
