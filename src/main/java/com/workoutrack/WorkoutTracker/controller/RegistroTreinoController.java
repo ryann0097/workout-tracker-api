@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,7 +29,7 @@ public class RegistroTreinoController {
 
     @GetMapping
     public List<RegistroTreinoResponse> listar(
-            @RequestParam(required = false) LocalDate data
+            @RequestParam(required = false) LocalDateTime data
     ) {
         return registroTreinoService.listarDoUsuario(data);
     }

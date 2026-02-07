@@ -14,10 +14,12 @@ import com.workoutrack.WorkoutTracker.repository.PlanoTreinoRepository;
 import com.workoutrack.WorkoutTracker.repository.TreinoRepository;
 import com.workoutrack.WorkoutTracker.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,23 +56,28 @@ public class TreinoService {
     @Transactional
     public TreinoResponse criar(UUID planoId, TreinoRequest request) {
         Usuario usuario = getUsuarioAutenticado();
-        PlanoTreino planoTreino = planoTreinoRepository.findByIdAndUsuario(planoId, usuario)
-                .orElseThrow(() -> new RuntimeException("Plano de treino não encontrado"));
-        
+
+        PlanoTreino planoTreino =
+                planoTreinoRepository.findByIdAndUsuario(planoId, usuario)
+                        .orElseThrow(() ->
+                                new ResponseStatusException(HttpStatus.FORBIDDEN, "Sem permissão")
+                        );
+
         Treino treino = new Treino();
         treino.setNome(request.nome());
         treino.setDiaSemana(request.diaSemana());
         treino.setPlanoTreino(planoTreino);
         
         Treino savedTreino = treinoRepository.save(treino);
-        
-        // Criar os exercícios do treino
+
         if (request.exercicios() != null && !request.exercicios().isEmpty()) {
             List<ExercicioTreino> exerciciosTreino = new ArrayList<>();
             for (ExercicioTreinoRequest exReq : request.exercicios()) {
                 Exercicio exercicio = exercicioRepository.findById(exReq.exercicioId())
-                        .orElseThrow(() -> new RuntimeException("Exercício não encontrado"));
-                
+                        .orElseThrow(() ->
+                                new ResponseStatusException(HttpStatus.NOT_FOUND, "Exercício não encontrado")
+                        );
+
                 ExercicioTreino exercicioTreino = new ExercicioTreino();
                 exercicioTreino.setTreino(savedTreino);
                 exercicioTreino.setExercicio(exercicio);
@@ -90,10 +97,11 @@ public class TreinoService {
 
     public List<TreinoResponse> listarPorPlano(UUID planoId) {
         Usuario usuario = getUsuarioAutenticado();
-        // Verifica se o plano pertence ao usuário
         planoTreinoRepository.findByIdAndUsuario(planoId, usuario)
-                .orElseThrow(() -> new RuntimeException("Plano de treino não encontrado"));
-        
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.FORBIDDEN, "Sem permissão")
+                );
+
         return treinoRepository.findByPlanoTreinoId(planoId).stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
@@ -102,17 +110,20 @@ public class TreinoService {
     @Transactional
     public TreinoResponse atualizar(UUID planoId, UUID treinoId, TreinoRequest request) {
         Usuario usuario = getUsuarioAutenticado();
-        // Verifica se o plano pertence ao usuário
         planoTreinoRepository.findByIdAndUsuario(planoId, usuario)
-                .orElseThrow(() -> new RuntimeException("Plano de treino não encontrado"));
-        
-        Treino treino = treinoRepository.findByIdAndPlanoTreinoId(treinoId, planoId)
-                .orElseThrow(() -> new RuntimeException("Treino não encontrado"));
-        
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.FORBIDDEN, "Sem permissão")
+                );
+
+        Treino treino = treinoRepository
+                .findByIdAndPlanoTreinoId(treinoId, planoId)
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND, "Treino não encontrado")
+                );
+
         treino.setNome(request.nome());
         treino.setDiaSemana(request.diaSemana());
-        
-        // Limpar exercícios antigos e adicionar novos
+
         if (treino.getExercicios() != null) {
             treino.getExercicios().clear();
         }
@@ -142,13 +153,17 @@ public class TreinoService {
 
     public void deletar(UUID planoId, UUID treinoId) {
         Usuario usuario = getUsuarioAutenticado();
-        // Verifica se o plano pertence ao usuário
         planoTreinoRepository.findByIdAndUsuario(planoId, usuario)
-                .orElseThrow(() -> new RuntimeException("Plano de treino não encontrado"));
-        
-        Treino treino = treinoRepository.findByIdAndPlanoTreinoId(treinoId, planoId)
-                .orElseThrow(() -> new RuntimeException("Treino não encontrado"));
-        
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.FORBIDDEN, "Sem permissão")
+                );
+
+        Treino treino = treinoRepository
+                .findByIdAndPlanoTreinoId(treinoId, planoId)
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND, "Treino não encontrado")
+                );
+
         treinoRepository.delete(treino);
     }
 
@@ -156,7 +171,9 @@ public class TreinoService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         return usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuário não autenticado")
+                );
     }
 
     private TreinoResponse toResponse(Treino treino) {

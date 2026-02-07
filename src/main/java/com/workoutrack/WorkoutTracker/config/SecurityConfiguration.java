@@ -1,5 +1,6 @@
 package com.workoutrack.WorkoutTracker.config;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -28,6 +29,14 @@ public class SecurityConfiguration {
                         .csrf(csrf -> csrf.disable())
                         .sessionManagement(session ->
                                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        )
+                        .exceptionHandling(ex -> ex
+                                .authenticationEntryPoint((req, res, e) ->
+                                        res.sendError(HttpServletResponse.SC_UNAUTHORIZED)
+                                )
+                                .accessDeniedHandler((req, res, e) ->
+                                        res.sendError(HttpServletResponse.SC_FORBIDDEN)
+                                )
                         )
                         .authorizeHttpRequests(auth -> auth
                                 .requestMatchers(
