@@ -48,7 +48,6 @@ O projeto foi pensado de forma extensível, permitindo evoluções futuras confo
 - CRUD completo para usuários, planos, treinos e exercícios
 - Registro de execução de treinos e exercícios
 - Perfis de treino para diferentes tipos de usuários
-- Controle de acesso por papel (Admin, Aluno, Profissional)
 - Endpoints seguros via JWT
 - Documentação de API via Swagger (SpringDoc OpenAPI)
 
