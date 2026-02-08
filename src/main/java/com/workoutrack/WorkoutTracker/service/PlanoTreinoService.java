@@ -7,6 +7,7 @@ import com.workoutrack.WorkoutTracker.dto.treino.PlanoTreinoResponse;
 import com.workoutrack.WorkoutTracker.repository.PlanoTreinoRepository;
 import com.workoutrack.WorkoutTracker.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -61,27 +62,42 @@ public class PlanoTreinoService {
 
     public PlanoTreinoResponse buscarDoUsuario(UUID id) {
         Usuario usuario = getUsuarioAutenticado();
-        PlanoTreino planoTreino = planoTreinoRepository.findByIdAndUsuario(id, usuario)
+        PlanoTreino planoTreino = planoTreinoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Plano de treino não encontrado"));
+
+        if (!planoTreino.getUsuario().getId().equals(usuario.getId())) {
+            throw new AccessDeniedException("Sem permissão");
+        }
+
         return toResponse(planoTreino);
     }
 
     public PlanoTreinoResponse atualizar(UUID id, PlanoTreinoRequest request) {
         Usuario usuario = getUsuarioAutenticado();
-        PlanoTreino planoTreino = planoTreinoRepository.findByIdAndUsuario(id, usuario)
+
+        PlanoTreino planoTreino = planoTreinoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Plano de treino não encontrado"));
-        
+
+        if (!planoTreino.getUsuario().getId().equals(usuario.getId())) {
+            throw new org.springframework.security.access.AccessDeniedException("Sem permissão");
+        }
+
         planoTreino.setNome(request.nome());
         planoTreino.setSemanasDuracao(request.semanasDuracao());
-        
+
         PlanoTreino updated = planoTreinoRepository.save(planoTreino);
         return toResponse(updated);
     }
 
+
     public void deletar(UUID id) {
         Usuario usuario = getUsuarioAutenticado();
-        PlanoTreino planoTreino = planoTreinoRepository.findByIdAndUsuario(id, usuario)
+        PlanoTreino planoTreino = planoTreinoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Plano de treino não encontrado"));
+
+        if (!planoTreino.getUsuario().getId().equals(usuario.getId())) {
+            throw new AccessDeniedException("Sem permissão");
+        }
         planoTreinoRepository.delete(planoTreino);
     }
 

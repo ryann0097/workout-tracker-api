@@ -23,7 +23,7 @@ public class Treino {
     private DiaSemana diaSemana;
 
     @ManyToOne
-    @JoinColumn(name = "plano_treino_id", insertable = false, updatable = false)
+    @JoinColumn(name = "plano_treino_id")
     private PlanoTreino planoTreino;
 
     @OneToMany(mappedBy = "treino", cascade = CascadeType.ALL, orphanRemoval = true)

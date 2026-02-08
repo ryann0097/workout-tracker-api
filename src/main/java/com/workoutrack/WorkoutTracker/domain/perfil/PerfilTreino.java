@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.UuidGenerator;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -20,7 +20,7 @@ public class PerfilTreino {
 
     private String nome;
 
-    private Timestamp dataNascimento;
+    private LocalDateTime dataNascimento;
 
     private Double peso;
 

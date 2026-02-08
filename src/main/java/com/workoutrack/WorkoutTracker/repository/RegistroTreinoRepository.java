@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -18,7 +19,14 @@ public interface RegistroTreinoRepository extends JpaRepository<RegistroTreino, 
     
     @Query("SELECT r FROM RegistroTreino r WHERE r.planoTreino.usuario = :usuario AND CAST(r.dataExecucao AS date) = :data")
     List<RegistroTreino> findByUsuarioAndData(Usuario usuario, LocalDate data);
-    
-    @Query("SELECT r FROM RegistroTreino r WHERE r.id = :id AND r.planoTreino.usuario = :usuario")
-    Optional<RegistroTreino> findByIdAndUsuario(UUID id, Usuario usuario);
+
+    List<RegistroTreino> findByPlanoTreinoUsuarioAndDataExecucaoBetween(
+            Usuario usuario,
+            LocalDateTime inicio,
+            LocalDateTime fim
+    );
+
+    List<RegistroTreino> findByPlanoTreinoUsuario(Usuario usuario);
+
+    Optional<RegistroTreino> findByIdAndPlanoTreinoUsuario(UUID id, Usuario usuario);
 }

@@ -13,13 +13,13 @@ import java.util.UUID;
 @Service
 public class JwtTokenService {
 
-    @Value("${spring.jwt.secret}")
+    @Value("${jwt.secret}")
     private String secret;
 
-    @Value("${spring.jwt.issuer}")
+    @Value("${jwt.issuer}")
     private String issuer;
 
-    @Value("${spring.jwt.expiration-hours}")
+    @Value("${jwt.expiration-hours}")
     private long expirationHours;
 
     public String generateToken(UserDetailsImpl user) {
