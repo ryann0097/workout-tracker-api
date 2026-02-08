@@ -3,10 +3,10 @@ spring:
     name: WorkoutTracker
 
   datasource:
-    url: jdbc:h2:mem:workoutdb
-    driver-class-name: org.h2.Driver
-    username: sa
-    password:
+    url: jdbc:postgresql://localhost:5432/appdb
+    driver-class-name: org.postgresql.Driver
+    username: appuser
+    password: apppass
 
   jpa:
     hibernate:
@@ -14,7 +14,7 @@ spring:
     show-sql: true
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
   h2:
     console:
@@ -22,8 +22,8 @@ spring:
       path: /h2-console
 
 jwt:
-  issuer: cabecao
-  secret: cabecao
+  issuer: dummy
+  secret: dummy
   expiration-hours: 2
 
 management:
