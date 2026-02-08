@@ -42,7 +42,10 @@ public class SecurityConfiguration {
                                 .requestMatchers(
                                         "/actuator/**",
                                         "/h2-console/**",
-                                        "/auth/**"
+                                        "/auth/**",
+                                        "/swagger-ui/**",
+                                        "/v3/api-docs/**",
+                                        "/swagger-ui.html"
                                 ).permitAll()
                                 .requestMatchers(HttpMethod.GET, "/exercicios/**").permitAll()
                                 .anyRequest().authenticated()
